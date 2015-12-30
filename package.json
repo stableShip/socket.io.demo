@@ -1,0 +1,19 @@
+{
+  "name": "code_typescript",
+  "version": "1.0.0",
+  "description": "visual stdio code use typescript demo",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "keywords": [
+    "visual-stdio-code",
+    "typescript"
+  ],
+  "author": "JIE",
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^2.3.4",
+    "express": "^4.13.1"
+  }
+}
