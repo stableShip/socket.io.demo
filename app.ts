@@ -12,8 +12,7 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 86400000 }));
 
-app.get("/test", function(req, res) {
-    console.log("test")
+app.get("/", function(req, res) {
     res.render("index.ejs");
 })
 
