@@ -19,8 +19,8 @@ var server = app.listen(app.get("port"), function() {
     console.log("server listen in ",app.get("port"))
 })
 
-
-io.listen(server)
+var users={};
+io.listen(server,{'pingInterval': 10,})
 var numUsers = 0;
 io.on("connection", function(socket: any) {
     var addedUser = false;
@@ -32,12 +32,17 @@ io.on("connection", function(socket: any) {
             username: socket.username,
             message: data
         });
+        console.log(process.env.PORT,socket.username,":",data);
     });
 
     // when the client emits 'add user', this listens and executes
     socket.on('add user', function(username) {
         if (addedUser) return;
-
+        if(users[username]){
+            console.log("断开",username,socket.id,"连接");
+            users[username].disconnect();
+        }
+        users[username]=socket;
         // we store the username in the socket session for this client
         socket.username = username;
         ++numUsers;
