@@ -1,0 +1,32 @@
+{
+  "apps" : [
+    {
+    "name"        : "chat-1",
+    "script"      : "app.js",
+    "env": {
+      "PORT": 3000
+    }
+  },
+    {
+      "name"        : "chat-2",
+      "script"      : "app.js",
+      "env": {
+        "PORT": 3001
+      }
+    },
+    {
+      "name"        : "chat-3",
+      "script"      : "app.js",
+      "env": {
+        "PORT": 3002
+      }
+    },
+    {
+      "name"        : "chat-1",
+      "script"      : "app.js",
+      "env": {
+        "PORT": 3003
+      }
+    }
+  ]
+}

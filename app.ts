@@ -1,12 +1,11 @@
-/// /// <reference path="./typings/tsd.d.ts" />
-
+/// <reference path="./typings/tsd.d.ts" />
 
 import express = require("express");
 import socket_io = require("socket.io");
 var io = socket_io();
 import path = require("path")
 var app = express();
-
+app.set('port',process.env.PORT||3000)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -16,8 +15,8 @@ app.get("/", function(req, res) {
     res.render("index.ejs");
 })
 
-var server = app.listen(3000, function() {
-    console.log("server listen in 3000")
+var server = app.listen(app.get("port"), function() {
+    console.log("server listen in ",app.get("port"))
 })
 
 
