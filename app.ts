@@ -3,6 +3,9 @@
 import express = require("express");
 import socket_io = require("socket.io");
 var io = socket_io();
+var redis = require('socket.io-redis');
+io.adapter(redis({ host: 'localhost', port: 6379 }));
+
 import path = require("path")
 var app = express();
 app.set('port',process.env.PORT||3000)
