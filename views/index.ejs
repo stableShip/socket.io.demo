@@ -7,11 +7,17 @@
 </head>
 <body>
   <ul class="pages">
-    <li class="chat page">
+    <li class="chat page" style="float: left; width: 50%">
       <div class="chatArea">
         <ul class="messages"></ul>
       </div>
-      <input class="inputMessage" placeholder="Type here..."/>
+      public:<input class="inputMessage" placeholder="Type here..."/>
+    </li>
+    <li class="chat page" style="float: right; width: 50%">
+      <div class="privateChatArea">
+        <ul class="privateMessages"></ul>
+      </div>
+     private:<input class="talkTo" placeholder="UserName..."/> <input class="inputPrivateMessage" placeholder="Type here..."/>
     </li>
     <li class="login page">
       <div class="form">
@@ -21,7 +27,7 @@
     </li>
   </ul>
 
-  <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="/jquery-2.2.2.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/main.js"></script>
 </body>

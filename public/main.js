@@ -12,6 +12,10 @@ $(function() {
   var $usernameInput = $('.usernameInput'); // Input for username
   var $messages = $('.messages'); // Messages area
   var $inputMessage = $('.inputMessage'); // Input message input box
+  var $privateMessages = $('.privateMessages'); // Messages area
+  var $inputPrivateMessage = $('.inputPrivateMessage'); // Input message input box
+  var $talkTo = $('.talkTo'); // Input message input box
+
 
   var $loginPage = $('.login.page'); // The login page
   var $chatPage = $('.chat.page'); // The chatroom page
@@ -40,8 +44,11 @@ $(function() {
 
       // If the username is valid
     if (username) {
-      socket = io({ 'reconnection': false});
+      //socket = io({ 'reconnection': false});
+      socket = io();
+
       socket.on('connect',function(){
+        console.log("")
         //logic
         $loginPage.fadeOut();
         $chatPage.show();
@@ -50,7 +57,10 @@ $(function() {
         // Tell the server your username
         socket.emit('add user', username);
 
-
+        socket.on("reconnect",function(){
+          console.log("reconnect:",username)
+          //socket.emit('add user', username);
+        })
 
         // Socket events
           // Whenever the server emits 'login', log the login message
@@ -93,10 +103,16 @@ $(function() {
         });
 
         socket.on('disconnect', function (data) {
-            $loginPage.show();
-            $loginPage.on('click');
-            $messages.html("");
+            //$loginPage.show();
+            //$loginPage.on('click');
+            //$messages.html("");
+          console.log(socket.username,"disconnect");
         });
+
+        socket.on('private_chat', function (data) {
+           addChatMessage(data,{private:true});
+        });
+
     })
     }
   }
@@ -112,9 +128,31 @@ $(function() {
       addChatMessage({
         username: username,
         message: message
-      });
+      },{private:false});
       // tell server to execute 'new message' and send along one parameter
       socket.emit('new message', message);
+    }
+  }
+
+  // Sends a chat message
+  function sendPrivateMessage () {
+    var message = $inputPrivateMessage.val();
+    var talkTo = $talkTo.val();
+    // Prevent markup from being injected into the message
+    message = cleanInput(message);
+    // if there is a non-empty message and a socket connection
+    if (talkTo && message && socket.connected) {
+      $inputPrivateMessage.val('');
+      addChatMessage({
+        username: username,
+        message: message,
+        talkTo:talkTo
+      },{private:true});
+      // tell server to execute 'new message' and send along one parameter
+      socket.emit('private_chat', {
+        talkTo: talkTo,
+        message: message
+      });
     }
   }
 
@@ -137,12 +175,19 @@ $(function() {
     var $usernameDiv = $('<span class="username"/>')
       .text(data.username)
       .css('color', getUsernameColor(data.username));
+
+    var message = options.private ? ("to: "+data.talkTo+"--"+data.message) : (data.message);
     var $messageBodyDiv = $('<span class="messageBody">')
-      .text(data.message);
+      .text(message);
 
     var typingClass = data.typing ? 'typing' : '';
-    var $messageDiv = $('<li class="message"/>')
-      .data('username', data.username)
+    var $messageDiv;
+    $messageDiv= $('<li class="message"/>')
+    if(options.private){
+      $messageDiv= $('<li class="privateMessage"/>')
+    }
+
+    $messageDiv.data('username', data.username)
       .addClass(typingClass)
       .append($usernameDiv, $messageBodyDiv);
 
@@ -186,12 +231,22 @@ $(function() {
     if (options.fade) {
       $el.hide().fadeIn(FADE_TIME);
     }
-    if (options.prepend) {
-      $messages.prepend($el);
-    } else {
-      $messages.append($el);
+    if(!options.private){
+      if (options.prepend) {
+        $messages.prepend($el);
+      } else {
+        $messages.append($el);
+      }
+      $messages[0].scrollTop = $messages[0].scrollHeight;
+    }else{
+      if (options.prepend) {
+        $privateMessages.prepend($el);
+      } else {
+        $privateMessages.append($el);
+      }
+      $privateMessages[0].scrollTop = $messages[0].scrollHeight;
     }
-    $messages[0].scrollTop = $messages[0].scrollHeight;
+
   }
 
   // Prevents input from having injected markup
@@ -242,13 +297,14 @@ $(function() {
 
   $window.keydown(function (event) {
     // Auto-focus the current input when a key is typed
-    if (!(event.ctrlKey || event.metaKey || event.altKey)) {
-      $currentInput.focus();
-    }
+    //if (!(event.ctrlKey || event.metaKey || event.altKey)) {
+    //  $currentInput.focus();
+    //}
     // When the client hits ENTER on their keyboard
     if (event.which === 13) {
       if (username && socket.connected) {
         sendMessage();
+        sendPrivateMessage();
         socket.emit('stop typing');
         typing = false;
       } else {
@@ -272,7 +328,6 @@ $(function() {
   $inputMessage.click(function () {
     $inputMessage.focus();
   });
-
 
 
 });

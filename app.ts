@@ -87,5 +87,18 @@ io.on("connection", function(socket: any) {
         }
     });
 
+    socket.on('private_chat', function(data) {
+        console.log("私聊:",data)
+        // echo globally that this client has left
+        var client = users[data.talkTo];
+        var sentMessage ={
+            username: socket.username,
+            message: data.message,
+            talkTo:data.talkTo
+        }
+        client.emit("private_chat", sentMessage);
+    });
+
+
 })
 
