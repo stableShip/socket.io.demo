@@ -44,11 +44,18 @@ $(function() {
 
       // If the username is valid
     if (username) {
-      //socket = io({ 'reconnection': false});
-      socket = io();
+      socket = io({ 'query': 'token=' + token});
+      //socket = io();
+      socket.on("error", function(error) {
+        console.log(error)
+        if (error.type == "UnauthorizedError" || error.code == "invalid_token") {
+          // redirect user to login page perhaps?
+          alert("验证失败")
+          console.log("User's token has expired",1111111111111);
+        }
+      });
 
       socket.on('connect',function(){
-        console.log("")
         //logic
         $loginPage.fadeOut();
         $chatPage.show();
@@ -103,9 +110,9 @@ $(function() {
         });
 
         socket.on('disconnect', function (data) {
-            //$loginPage.show();
-            //$loginPage.on('click');
-            //$messages.html("");
+            $loginPage.show();
+            $loginPage.on('click');
+            $messages.html("");
           console.log(socket.username,"disconnect");
         });
 
