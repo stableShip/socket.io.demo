@@ -1,4 +1,6 @@
 # demo of socket.io
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/stableShip/socket.io.demo.svg)](https://greenkeeper.io/)
 demo of socket.io
 
 ## Install Typescript
